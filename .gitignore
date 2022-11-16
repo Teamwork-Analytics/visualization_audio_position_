@@ -3,5 +3,4 @@ vad/data
 venv
 .idea
 **/__**__
-/config/
 /test/
