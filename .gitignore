@@ -7,4 +7,5 @@ venv
 ./result.wav
 .idea
 **/__**__
-config
+/config/
+/test/
