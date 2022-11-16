@@ -1,9 +1,8 @@
 import os
 import pandas as pd
-from datetime import datetime
 
 from IPA import main_IPA
-from config import Constant
+from config.config import Constant
 from pozyx_json_to_csv_2022 import pozyx_json_to_csv
 from vad.pozyx_extraction import main
 from vad.hive_automation import hive_main
