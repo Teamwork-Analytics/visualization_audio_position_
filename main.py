@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 from IPA import main_IPA
+from config import Constant
 from pozyx_json_to_csv_2022 import pozyx_json_to_csv
 from vad.pozyx_extraction import main
 from vad.hive_automation import hive_main
@@ -27,7 +28,7 @@ base_path = "C:\\develop\\saved_data\\"
 
 @app.route("/audio-pos/<simulationid>")
 def call_visualization(simulationid):
-    client = MongoClient("mongodb+srv://admin:5ZVy3RS0FIMcmTxn@cluster0.ravibmh.mongodb.net/app?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://admin:" + Constant.MONGO_DB_PASSWD + "@cluster0.ravibmh.mongodb.net/app?retryWrites=true&w=majority")
 
     db = client["app"]
     # Issue the serverStatus command and print the results

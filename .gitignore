@@ -7,3 +7,4 @@ venv
 ./result.wav
 .idea
 **/__**__
+./config.py
