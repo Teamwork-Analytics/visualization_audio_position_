@@ -1,11 +1,8 @@
 207
 vad/data
 venv
-./test.wav
-./vad.zip
-
-./result.wav
 .idea
 **/__**__
 /config/
 /test/
+/config/
