@@ -175,8 +175,8 @@ def __get_minimum_timestamps(processed_data_dict: dict):
 def extract_interpolate_single_session(raw_pozyx_path: str, sync_txt_path: str):
     """
     the function that would be call.
-    It uses raw pozyx file to generate the positioning data for all the four students.
-    The output files only contain the positioning data for every second.
+    It uses raw pozyx file to generate the pozyx_json_csv data for all the four students.
+    The output files only contain the pozyx_json_csv data for every second.
     """
 
     # extract timestamp when the audio start to record

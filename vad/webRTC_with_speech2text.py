@@ -265,7 +265,7 @@ def test_tqdm():
 
 
 def testing_detection():
-    # res = do_vad_with_speech_to_text("Rio/voice at beginning.wav", 3)
+    # audio-sim = do_vad_with_speech_to_text("Rio/voice at beginning.wav", 3)
     res = do_vad_with_speech_to_text("Rio/3413 3415.wav", 3)
     print()
 
