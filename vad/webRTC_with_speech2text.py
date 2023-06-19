@@ -54,7 +54,7 @@ def do_vad_with_speech_to_text(path: str, strictness_level: int, word_threshold:
                                              number_of_thread=number_of_thread)
 
     # this one is to left a temporary json file to prevent error in later code
-    with open("path/temp.json", "w") as fp:
+    with open("temporary_data/temp.json", "w") as fp:
         json.dump(segments, fp)
 
     # if not return_str:
@@ -93,9 +93,9 @@ class Speech_to_text_thread(threading.Thread):
                 start = int(float(line[0]) * 1000)
                 end = int(float(line[1]) * 1000)
 
-                if end - start < 0.5:
-                    pbar.update(1)
-                    continue
+                # if end - start < 0.5:
+                #     pbar.update(1)
+                #     continue
 
                 clip = audio_dub[start: end]
                 clip.export(os.path.join(temp_file_path, "{}_{}.wav".format(start, end)), "wav")
@@ -123,9 +123,9 @@ def speech_to_text(segments: list, audio_dub: pydub.AudioSegment, output_list: l
             start = int(float(line[0]) * 1000)
             end = int(float(line[1]) * 1000)
 
-            if end - start < 0.5:
-                pbar.update(1)
-                continue
+            # if end - start < 0.5:
+            #     pbar.update(1)
+            #     continue
 
             clip = audio_dub[start: end]
             clip.export(os.path.join(temp_file_path, "{}_{}.wav".format(start, end)), "wav")
