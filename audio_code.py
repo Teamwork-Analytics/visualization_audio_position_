@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from VAD_SN.webRTC import do_vad
+from vad.webRTC import do_vad
 
 # colors should be added if more participants are expected
 COLORS = ("blue", "green", "red", "yellow", "white", "black")
