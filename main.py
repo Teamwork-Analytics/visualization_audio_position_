@@ -4,7 +4,7 @@ import pandas as pd
 from IPA import main_IPA
 from config.config import Constant
 from pozyx_json_to_csv_2022 import pozyx_json_to_csv
-from vad.pozyx_extraction import main
+from vad.pozyx_extraction import main, get_pozyx_start_timestamp
 from vad.hive_automation import hive_main
 from pymongo import MongoClient
 import matplotlib.pyplot as plt
@@ -75,8 +75,8 @@ def call_visualization(simulationid):
     print("pozyx_json_to_csv finish")
     plt.show()
     plt.clf()
-
-    main_IPA(json_csv_output_path, int(session), data_dir + "\\teamwork.png")
+    positioning_start_timestamp = get_pozyx_start_timestamp(sync_path)
+    main_IPA(json_csv_output_path, int(session), positioning_start_timestamp, data_dir + "\\teamwork.png")
     print("IPA finish")
 
     plt.show()
