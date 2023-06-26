@@ -68,6 +68,7 @@ def get_timestamp_from_sync(sync_path: str, timestamp_type: str):
 
     # timestamp = datetime.datetime.timestamp(date)
     return timestamp
+
 # def get_timestamp(sync_path: str):
 #     """
 #     for a specific sync file, read its start time data.

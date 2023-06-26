@@ -216,7 +216,7 @@ def get_timestamp(sync_path: str):
 
     time_string = positioning_start_line.split("_____")[1]
     # 01-Sep-2021_13-19-37-929 %d-%b-%Y-%H-%M-%S-%f
-    date = datetime.datetime.strptime(time_string.strip(), "%Y-%m-%d_%H-%M-%S-%f")
+    date = datetime.datetime.strptime(time_string.strip() + "-+1000", "%Y-%m-%d_%H-%M-%S-%f-%z")
     timestamp = datetime.datetime.timestamp(date)
     return timestamp
 
