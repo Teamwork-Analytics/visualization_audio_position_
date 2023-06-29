@@ -5,7 +5,7 @@
 import math
 import os
 
-import igraph as ig
+# import igraph as ig
 import matplotlib.pyplot as plt
 import pandas as pd
 

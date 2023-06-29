@@ -11,6 +11,7 @@ import sys
 
 import numpy as np
 import pandas
+import pytz
 import simplejson as json
 from scipy import interpolate
 
@@ -32,6 +33,65 @@ def get_hms_time_list(timestamp_array):
         new_time_list.append(str(datetime.timedelta(seconds=int(a_time))))
     return new_time_list
 
+
+def get_timestamp_from_sync(sync_path: str, timestamp_type: str):
+    """
+    for a specific sync file, read its start time data.
+    :param sync_path: the path of sync.txt
+    :return: the timestamp of when pozyx started
+    """
+    with open(sync_path) as f:
+        sync_content = f.readlines()
+
+    positioning_start_line = ""
+    for line in sync_content:
+        # find the line containing what we want
+        if timestamp_type == "positioning":
+            if "start receive position" in line and "baseline" not in line:
+                positioning_start_line = line
+                break
+        elif timestamp_type == "audio":
+            if "audio start" in line and "baseline" not in line:
+                positioning_start_line = line
+                break
+        else:
+            raise ValueError("'{}' is not a supported timestamp type to extract. Try to set timestamp type as audio or "
+                             "positioning")
+
+    time_string = positioning_start_line.split("_____")[1]
+    # 01-Sep-2021_13-19-37-929 %d-%b-%Y-%H-%M-%S-%f
+
+    # configure the timezone for the striptime:
+    # https://statisticsglobe.com/convert-datetime-to-different-time-zone-python
+    date = datetime.datetime.strptime(time_string.strip() + "-+1000", "%Y-%m-%d_%H-%M-%S-%f-%z")
+    timestamp = date.timestamp()
+
+    # timestamp = datetime.datetime.timestamp(date)
+    return timestamp
+
+# def get_timestamp(sync_path: str):
+#     """
+#     for a specific sync file, read its start time data.
+#     :param sync_path: the path of sync.txt
+#     :return: the timestamp of when pozyx started
+#     """
+#     with open(sync_path) as f:
+#         sync_content = f.readlines()
+#
+#     positioning_start_line = ""
+#     for line in sync_content:
+#         # find the line containing what we want
+#         if "audio start" in line and "baseline" not in line:
+#             positioning_start_line = line
+#             break
+#
+#     time_string = positioning_start_line.split("_____")[1]
+#     # 01-Sep-2021_13-19-37-929 %d-%b-%Y-%H-%M-%S-%f
+#     date = datetime.datetime.strptime(time_string.strip(), "%Y-%m-%d_%H-%M-%S-%f")
+#     timestamp = datetime.datetime.timestamp(date)
+#     return timestamp
+
+
 def get_interpolated_data(data_frame, audio_start_timestamp: float):
     """
     using scipy to generate a interpolation model for the data points
@@ -45,9 +105,9 @@ def get_interpolated_data(data_frame, audio_start_timestamp: float):
     pozyx_y = np.array(data_frame["y"])
 
     if len(pozyx_x) == 0 or len(pozyx_y) == 0:
-        pozyx_x = np.array([-10000,-10000])
-        pozyx_y = np.array([-10000,-10000])
-        timestamp = np.array([0,1])
+        pozyx_x = np.array([-10000, -10000])
+        pozyx_y = np.array([-10000, -10000])
+        timestamp = np.array([0, 1])
 
     interpolate_x = interpolate.interp1d(timestamp, pozyx_x, kind="linear")
     interpolate_y = interpolate.interp1d(timestamp, pozyx_y, kind="linear")
@@ -93,8 +153,6 @@ def get_interpolated_data(data_frame, audio_start_timestamp: float):
     # pl.plot(timestamp[start: end], pozyx_y[start: end], label="y")
     # pl.legend(loc='lower right')
     # pl.show()
-
-
 
     interpolated_dataframe = pandas.DataFrame({
         "audio_start_timestamp": audio_start_timestamp_list,
@@ -151,16 +209,14 @@ def loading_json(path: str):
 #
 # functions below are the ones you can directly use
 ###################
-def generate_single_file(raw_pozyx_path: str, output_folder_path: str, sync_txt_path: str):
+def generate_single_file(raw_pozyx_path: str, output_folder_path: str, audio_start_timestamp: float):
     """
     the function that would be call.
-    It uses raw pozyx file to generate the positioning data for all the four students.
-    The output files only contain the positioning data for every second.
+    It uses raw pozyx file to generate the pozyx_json_csv data for all the four students.
+    The output files only contain the pozyx_json_csv data for every second.
     """
 
     # extract timestamp when the audio start to record
-    audio_start_timestamp = get_timestamp(sync_txt_path)
-
 
     # extract pozyx data
     a_dict = generate_poxyz_data_R(raw_pozyx_path)
@@ -183,28 +239,6 @@ def generate_single_file(raw_pozyx_path: str, output_folder_path: str, sync_txt_
 
 
 
-def get_timestamp(sync_path: str):
-    """
-    for a specific sync file, read its start time data.
-    :param sync_path: the path of sync.txt
-    :return: the timestamp of when pozyx started
-    """
-    with open(sync_path) as f:
-        sync_content = f.readlines()
-
-    positioning_start_line = ""
-    for line in sync_content:
-        # find the line containing what we want
-        if "audio start" in line and "baseline" not in line:
-            positioning_start_line = line
-            break
-
-    time_string = positioning_start_line.split("_____")[1]
-    # 01-Sep-2021_13-19-37-929 %d-%b-%Y-%H-%M-%S-%f
-    date = datetime.datetime.strptime(time_string.strip(), "%Y-%m-%d_%H-%M-%S-%f")
-    timestamp = datetime.datetime.timestamp(date)
-    return timestamp
-
 """
 def main(argv):
     raw_pozyx_path = ""
@@ -224,6 +258,8 @@ def main(argv):
         return
     generate_single_file(raw_pozyx_path=raw_pozyx_path, output_folder_path=output_folder_path, sync_txt_path=sync_txt_path)
 """
+
+
 def main(raw_pozyx_path, output_folder_path, sync_txt_path):
     # raw_pozyx_path = ""
     # output_folder_path = ""
@@ -240,7 +276,8 @@ def main(raw_pozyx_path, output_folder_path, sync_txt_path):
     if raw_pozyx_path == "" or output_folder_path == "" or sync_txt_path == "":
         print("error: audio_path and output_path and sync_txt path must have input value")
         return
-    generate_single_file(raw_pozyx_path=raw_pozyx_path, output_folder_path=output_folder_path, sync_txt_path=sync_txt_path)
+    generate_single_file(raw_pozyx_path=raw_pozyx_path, output_folder_path=output_folder_path,
+                         sync_txt_path=sync_txt_path)
 
 
 if __name__ == '__main__':

@@ -1,2 +1,0 @@
-https://igraph.org/python/tutorial/develop/install.html
-https://github.com/igraph/python-igraph/blob/master/README.md
