@@ -20,7 +20,7 @@ def preprocessing_audio_files(audio_files_folder: str, processed_output_folder, 
     processed_audio = set()
 
     for a_audio_file in os.listdir(audio_files_folder):
-        if not a_audio_file.startswith("sim_"):
+        if not a_audio_file.startswith("sim_") and ".wav" not in a_audio_file:
             continue
         # preventing errors
         color = ""

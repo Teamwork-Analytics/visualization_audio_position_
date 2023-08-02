@@ -21,6 +21,10 @@ def get_color(a_filename: str, COLORS_list: list or tuple):
 def extract_vad(audio_folder_path: str):
     res_dict = {}
     for a_filename in os.listdir(audio_folder_path):
+        if ".wav" not in a_filename:
+            print("{} is not a audio file, skipped".format(os.path.join(audio_folder_path, a_filename)))
+            continue
+
         path = os.path.join(audio_folder_path, a_filename)
         result = do_vad(path, 3)
         color = get_color(a_filename, COLORS)
